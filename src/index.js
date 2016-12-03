@@ -112,26 +112,56 @@ function getIteratorFn(maybeIterable) {
  */
 
 var ANONYMOUS = '<<anonymous>>';
+var ReactPropTypes;
 
-var ReactPropTypes = {
-  array: createPrimitiveTypeChecker('array'),
-  bool: createPrimitiveTypeChecker('boolean'),
-  func: createPrimitiveTypeChecker('function'),
-  number: createPrimitiveTypeChecker('number'),
-  object: createPrimitiveTypeChecker('object'),
-  string: createPrimitiveTypeChecker('string'),
-  symbol: createPrimitiveTypeChecker('symbol'),
+if (process.env.NODE_ENV !== 'production') {
+  ReactPropTypes = {
+    array: createPrimitiveTypeChecker('array'),
+    bool: createPrimitiveTypeChecker('boolean'),
+    func: createPrimitiveTypeChecker('function'),
+    number: createPrimitiveTypeChecker('number'),
+    object: createPrimitiveTypeChecker('object'),
+    string: createPrimitiveTypeChecker('string'),
+    symbol: createPrimitiveTypeChecker('symbol'),
 
-  any: createAnyTypeChecker(),
-  arrayOf: createArrayOfTypeChecker,
-  element: createElementTypeChecker(),
-  instanceOf: createInstanceTypeChecker,
-  node: createNodeChecker(),
-  objectOf: createObjectOfTypeChecker,
-  oneOf: createEnumTypeChecker,
-  oneOfType: createUnionTypeChecker,
-  shape: createShapeTypeChecker,
-};
+    any: createAnyTypeChecker(),
+    arrayOf: createArrayOfTypeChecker,
+    element: createElementTypeChecker(),
+    instanceOf: createInstanceTypeChecker,
+    node: createNodeChecker(),
+    objectOf: createObjectOfTypeChecker,
+    oneOf: createEnumTypeChecker,
+    oneOfType: createUnionTypeChecker,
+    shape: createShapeTypeChecker,
+  };
+} else {
+  var productionTypeChecker = function() {
+    // React.PropTypes type checking code is stripped in production
+  };
+
+  productionTypeChecker.isRequired = productionTypeChecker;
+  var getProductionTypeChecker = () => productionTypeChecker;
+  // Keep in sync with development version above
+  ReactPropTypes = {
+    array: productionTypeChecker,
+    bool: productionTypeChecker,
+    func: productionTypeChecker,
+    number: productionTypeChecker,
+    object: productionTypeChecker,
+    string: productionTypeChecker,
+    symbol: productionTypeChecker,
+
+    any: productionTypeChecker,
+    arrayOf: getProductionTypeChecker,
+    element: productionTypeChecker,
+    instanceOf: getProductionTypeChecker,
+    node: productionTypeChecker,
+    objectOf: getProductionTypeChecker,
+    oneOf: getProductionTypeChecker,
+    oneOfType: getProductionTypeChecker,
+    shape: getProductionTypeChecker,
+  };
+}
 
 function createChainableTypeChecker(validate) {
   function checkType(
